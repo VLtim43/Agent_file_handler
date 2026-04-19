@@ -1,0 +1,15 @@
+{
+  "name": "agent-file-handler",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "bun src/index.ts"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}
