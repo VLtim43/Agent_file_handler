@@ -20,7 +20,7 @@ function mockSuggestions(files: FileEntry[]): RenameSuggestion[] {
 export async function suggestRenames(
   files: FileEntry[],
   instructions: string,
-  mock = false
+  mock = false,
 ): Promise<RenameSuggestion[]> {
   if (mock) return mockSuggestions(files);
   const fileList = files.map((f) => f.name).join("\n");
@@ -33,8 +33,12 @@ export async function suggestRenames(
         role: "system",
         content: [
           "You are a file renaming assistant.",
-          "Given a list of file names and renaming instructions, suggest new names.",
-          "Preserve file extensions unless instructed otherwise.",
+          "Given a list of file names and renaming instructions, suggest new names following these rules:",
+          "1. Remove or replace any invalid/special characters (spaces, accents, symbols like !@#$%^&*()[]{}|\\<>?'\"`~) — use underscores or hyphens instead.",
+          "2. Rename files with generic or auto-generated names (e.g. '1.png', 'image001.jpg', 'banana(2).png', 'untitled.pdf', 'document(3).docx', 'file_copy.txt') to a random 8-character alphanumeric string (e.g. 'a3f9kx2m.png'). Do NOT try to invent a descriptive name for these — just use a random string.",
+          "3. Preserve file extensions unless instructed otherwise.",
+          "4. Use lowercase letters and underscores or hyphens only (no spaces).",
+          "5. Keep names concise but meaningful.",
           'Return ONLY a JSON object with key "suggestions": array of { "original", "suggested" }.',
         ].join(" "),
       },
