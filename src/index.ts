@@ -13,9 +13,9 @@ program
 program
   .command("rename <folder>")
   .description("Use an LLM to suggest and apply file renames")
-  .requiredOption("-t, --prompt <instructions>", "Renaming instructions for the agent")
+  .option("-t, --context <info>", "Extra context injected into the agent prompt")
   .option("--mock", "Skip the API and use mock suggestions (for testing)")
-  .action(async (folder: string, opts: { prompt: string; mock: boolean }) => {
+  .action(async (folder: string, opts: { context?: string; mock: boolean }) => {
     const folderPath = resolve(folder);
 
     console.log(`\nScanning: ${folderPath}`);
@@ -30,12 +30,17 @@ program
     files.forEach((f) => console.log(`  ${f.name}`));
 
     console.log("\nAsking agent for suggestions...");
-    const suggestions = await suggestRenames(files, opts.prompt, opts.mock);
+    const suggestions = await suggestRenames(files, opts.context ?? "", opts.mock);
 
     console.log("\nSuggested renames:");
     suggestions.forEach(({ original, suggested }) =>
       console.log(`  ${original} → ${suggested}`)
     );
+
+    if (opts.mock) {
+      console.log("\n(mock mode — no files were changed)");
+      return;
+    }
 
     const rl = createInterface({ input: process.stdin, output: process.stdout });
     const answer = await rl.question("\nApply these renames? [y/N] ");

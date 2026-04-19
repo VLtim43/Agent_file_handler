@@ -44,7 +44,9 @@ export async function suggestRenames(
       },
       {
         role: "user",
-        content: `Files:\n${fileList}\n\nInstructions: ${instructions}`,
+        content: instructions
+          ? `Files:\n${fileList}\n\nExtra context: ${instructions}`
+          : `Files:\n${fileList}`,
       },
     ],
   });
