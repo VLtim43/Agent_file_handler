@@ -13,7 +13,7 @@ program
 program
   .command("rename <folder>")
   .description("Use an LLM to suggest and apply file renames")
-  .requiredOption("-p, --prompt <instructions>", "Renaming instructions for the agent")
+  .requiredOption("-t, --prompt <instructions>", "Renaming instructions for the agent")
   .option("--mock", "Skip the API and use mock suggestions (for testing)")
   .action(async (folder: string, opts: { prompt: string; mock: boolean }) => {
     const folderPath = resolve(folder);
