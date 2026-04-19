@@ -54,6 +54,20 @@ export async function suggestRenames(
   const content = response.choices[0]?.message?.content;
   if (!content) throw new Error("Empty response from LLM");
 
-  const parsed = JSON.parse(content) as { suggestions: RenameSuggestion[] };
+  let parsed: { suggestions: RenameSuggestion[] };
+  try {
+    parsed = JSON.parse(content) as { suggestions: RenameSuggestion[] };
+  } catch {
+    const err: any = new Error("Failed to parse LLM response as JSON");
+    err.raw = content;
+    throw err;
+  }
+
+  if (!Array.isArray(parsed.suggestions)) {
+    const err: any = new Error('LLM response missing "suggestions" array');
+    err.raw = content;
+    throw err;
+  }
+
   return parsed.suggestions;
 }
